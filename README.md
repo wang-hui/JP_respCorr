@@ -1,7 +1,7 @@
 # JP_respCorr
 This is a git repo to calculate HBHE respCorr
 
-1. Set the input file in run.C
+1. Set the input file in run.C  
 The input files are made with  
 https://github.com/wang-hui/HCAL_MET_res/blob/CMSSW_10_6_x/HCAL_Jet_Ana/plugins/HCAL_Jet_Ana.cc  
 An example input file can be found in LPC EOS:  
