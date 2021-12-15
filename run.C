@@ -7,8 +7,9 @@
 
 #include "SimhitCorrData.h"
 
-TString FileName = "for_JP/UL_DoublePion_E-50_noPU_RECO_mahi_energy_TTree.root";
-const int MaxEvents = 500000;
+TString FileName = "for_JP/UL_DoublePion_E-50_RAW_noPU_RECO_simHit_energy_TTree.root";
+//const int MaxEvents = 500000;
+const int MaxEvents = -1;
 
 void run(void)
 {
