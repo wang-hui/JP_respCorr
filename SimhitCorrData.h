@@ -16,6 +16,9 @@
 #include <tuple>
 #include <cassert>
 
+
+const bool DOSCALING=true;
+
 //
 // forward declarations
 //
@@ -39,7 +42,13 @@ public:
   void ieta(Int_t i) { first=i; return; }
   void depth(Int_t i) { second=i; return; }
 
+  bool isHB(void) const { return (abs(ieta())<=14 || (abs(ieta())==15 && depth()==1) || (abs(ieta())==16 && depth()==1)); }
+  bool isHE(void) const { return (!isHB() && abs(ieta())<=29); }
+  
 };
+
+
+
 
 class ValErrPair : std::pair<Double_t, Double_t>
 {
@@ -53,6 +62,7 @@ public:
   void err(Double_t v) { second=v; return; }
 
 };
+
 
 class RespCorr : public std::map<EtaDepthPair, ValErrPair>
 {
@@ -68,9 +78,8 @@ public:
   Double_t getErr(Int_t ieta, Int_t depth) const { assert(hasVal(ieta,depth)); return at(EtaDepthPair(ieta, depth)).err(); }
 
   TH1D* makeHist(TString name, TString title, Int_t depth) const;
-
+  
 };
-
 
 
 
@@ -91,6 +100,8 @@ public:
   void ieta(Int_t i) { first.ieta(i); return; }
   void iphi(Int_t i) { second=i; return; }
   void depth(Int_t i) { first.depth(i); return; }
+  bool isHB(void) const { return first.isHB(); }
+  bool isHE(void) const { return first.isHE(); }
 
 };
 
@@ -105,6 +116,7 @@ public:
   bool hasVal(Int_t ieta, Int_t iphi, Int_t depth) const { return (find(EtaPhiDepthTuple(ieta, iphi, depth))!=end()); }
   void addVal(Int_t ieta, Int_t iphi, Int_t depth, Double_t val) { if(hasVal(ieta,iphi,depth)) at(EtaPhiDepthTuple(ieta, iphi, depth))+=val; else setVal(ieta,iphi,depth,val); return; }
   double getSumVal(const RespCorr& respcorr) const;
+  double getSumValCorr(const RespCorr& respcorr, double HBPar1, double HBPar2, double HBPar3, double HEPar1, double HEPar2, double HEPar3) const;
   double getSumValDefault(void) const;
 
 };
@@ -124,6 +136,7 @@ public:
   Double_t getHcalE(Int_t ieta, Int_t iphi, Int_t depth) const { return fHcalE.getVal(ieta, iphi, depth); }
   Double_t getSumHcalEDefault(void) const { return fHcalE.getSumValDefault(); }
   Double_t getSumHcalE(const RespCorr& respcorr) const { return fHcalE.getSumVal(respcorr); }
+  double getSumHcalECorr(const RespCorr& respcorr, double HBPar1, double HBPar2, double HBPar3, double HEPar1, double HEPar2, double HEPar3) const { return fHcalE.getSumValCorr(respcorr, HBPar1, HBPar2, HBPar3, HEPar1, HEPar2, HEPar3); }
   Double_t getOtherE(void) const { return fOtherE; }
   Double_t getTruthE(void) const { return fTruthE; }
   
@@ -169,7 +182,11 @@ public:
   // the data and default respcorrs
   std::vector<SimhitCorrDatum> fData;
   RespCorr fRespCorrs;
-   
+
+  // multiplicative function fit parameters
+  Double_t HBPar1, HBPar2, HBPar3;
+  Double_t HEPar1, HEPar2, HEPar3;
+  
   // fit parameters
   Int_t fPrintLevel;
   Double_t fParStep;
