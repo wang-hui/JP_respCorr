@@ -7,9 +7,10 @@
 
 #include "SimhitCorrData.h"
 
-TString FileName = "for_JP/UL_DoublePion_E-50_RAW_noPU_RECO_simHit_energy_TTree.root";
-//const int MaxEvents = 500000;
+TString FileName = "for_JP/UL_DoublePion_E-50_RECO_noPU_simHits_fix_HB_TTree.root";
+//const int MaxEvents = 100000;
 const int MaxEvents = -1;
+const float SampleGenE = 50.0;  // set to 50 for DoublePion_E-50 sample
 
 void run(void)
 {
@@ -37,7 +38,7 @@ void CaloJetTree::Loop()
     
     SimhitCorrDatum datum[kMaxCaloJetVec_p4];
     for(Int_t i=0; i<kMaxCaloJetVec_p4; i++)
-      datum[i].setTruthE(50.);
+      datum[i].setTruthE(SampleGenE);
     
     for(unsigned long i=0; i<CaloJetVec_CaloConstituentsVec_Index->size(); i++) {
       int index=CaloJetVec_CaloConstituentsVec_Index->at(i);
