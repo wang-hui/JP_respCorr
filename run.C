@@ -7,7 +7,9 @@
 
 #include "SimhitCorrData.h"
 
-TString FileName = "for_JP/UL_DoublePion_E-50_RECO_noPU_simHits_fix_HB_TTree.root";
+//TString FileName = "for_JP/UL_DoublePion_E-50_RECO_noPU_simHits_fix_HB_TTree.root";
+//TString FileName = "for_JP/UL_DoublePion_E-50_RECO_PU_DLPHIN_class_no_respCorr_TTree.root";
+TString FileName = "/uscms_data/d3/huiwang/HCAL/CMSSW_10_6_12/src/HCAL_MET_res/UL_DoublePion_E-50_RECO_PU_DLPHIN_class_no_respCorr_TTree.root";
 //const int MaxEvents = 100000;
 const int MaxEvents = -1;
 const float SampleGenE = 50.0;  // set to 50 for DoublePion_E-50 sample
@@ -35,9 +37,10 @@ void CaloJetTree::Loop()
     
     if(jentry%10000==0) std::cout << jentry << std::endl;
     if(MaxEvents > 0 && jentry > MaxEvents) break;
-    
-    SimhitCorrDatum datum[kMaxCaloJetVec_p4];
-    for(Int_t i=0; i<kMaxCaloJetVec_p4; i++)
+
+    Int_t nCaloJetVec = CaloJetVec_Energy->size(); 
+    SimhitCorrDatum datum[nCaloJetVec];
+    for(Int_t i=0; i<nCaloJetVec; i++)
       datum[i].setTruthE(SampleGenE);
     
     for(unsigned long i=0; i<CaloJetVec_CaloConstituentsVec_Index->size(); i++) {
@@ -53,11 +56,11 @@ void CaloJetTree::Loop()
       int ieta=CaloJetVec_CaloConstituentsVec_HCALChannelVec_Ieta->at(i);
       int iphi=CaloJetVec_CaloConstituentsVec_HCALChannelVec_Iphi->at(i);
       int depth=CaloJetVec_CaloConstituentsVec_HCALChannelVec_Depth->at(i);
-      double energy=CaloJetVec_CaloConstituentsVec_HCALChannelVec_TruthEnergy->at(i);
+      double energy=CaloJetVec_CaloConstituentsVec_HCALChannelVec_Energy->at(i);
       datum[index].addHcalE(ieta, iphi, depth, energy);
     }
     
-    for(Int_t i=0; i<kMaxCaloJetVec_p4; i++)
+    for(Int_t i=0; i<nCaloJetVec; i++)
       if(datum[i].getOtherE()<datum[i].getTruthE()*0.05) data.addDatum(datum[i]);
   }
 

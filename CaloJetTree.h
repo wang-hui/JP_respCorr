@@ -18,7 +18,6 @@
 #include "vector"
 #include "vector"
 
-
 class CaloJetTree {
 public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
@@ -27,15 +26,10 @@ public :
    TString      FileName;
 
 // Fixed size dimensions of array or collections stored in the TTree if any.
-   static constexpr Int_t kMaxCaloJetVec_p4 = 2;
    static constexpr Int_t kMaxCaloJetVec_CaloConstituentsVec_p4 = 105;
 
    // Declaration of leaf types
-   Int_t           CaloJetVec_p4_;
-   Double_t        CaloJetVec_p4_fCoordinates_fX[kMaxCaloJetVec_p4];   //[CaloJetVec_p4_]
-   Double_t        CaloJetVec_p4_fCoordinates_fY[kMaxCaloJetVec_p4];   //[CaloJetVec_p4_]
-   Double_t        CaloJetVec_p4_fCoordinates_fZ[kMaxCaloJetVec_p4];   //[CaloJetVec_p4_]
-   Double_t        CaloJetVec_p4_fCoordinates_fT[kMaxCaloJetVec_p4];   //[CaloJetVec_p4_]
+   vector<float>   *CaloJetVec_Energy;
    vector<int>     *CaloJetVec_CaloConstituentsVec_Index;
    vector<int>     *CaloJetVec_CaloConstituentsVec_Ieta;
    vector<int>     *CaloJetVec_CaloConstituentsVec_Iphi;
@@ -54,15 +48,10 @@ public :
    vector<int>     *CaloJetVec_CaloConstituentsVec_HCALChannelVec_Ieta;
    vector<int>     *CaloJetVec_CaloConstituentsVec_HCALChannelVec_Iphi;
    vector<int>     *CaloJetVec_CaloConstituentsVec_HCALChannelVec_Depth;
-   vector<int>     *CaloJetVec_CaloConstituentsVec_HCALChannelVec_NSimHits;
-   vector<float>   *CaloJetVec_CaloConstituentsVec_HCALChannelVec_TruthEnergy;
+   vector<float>   *CaloJetVec_CaloConstituentsVec_HCALChannelVec_Energy;
 
    // List of branches
-   TBranch        *b_CaloJetVec_p4_;   //!
-   TBranch        *b_CaloJetVec_p4_fCoordinates_fX;   //!
-   TBranch        *b_CaloJetVec_p4_fCoordinates_fY;   //!
-   TBranch        *b_CaloJetVec_p4_fCoordinates_fZ;   //!
-   TBranch        *b_CaloJetVec_p4_fCoordinates_fT;   //!
+   TBranch        *b_CaloJetVec_Energy;   //!
    TBranch        *b_CaloJetVec_CaloConstituentsVec_Index;   //!
    TBranch        *b_CaloJetVec_CaloConstituentsVec_Ieta;   //!
    TBranch        *b_CaloJetVec_CaloConstituentsVec_Iphi;   //!
@@ -81,8 +70,7 @@ public :
    TBranch        *b_CaloJetVec_CaloConstituentsVec_HCALChannelVec_Ieta;   //!
    TBranch        *b_CaloJetVec_CaloConstituentsVec_HCALChannelVec_Iphi;   //!
    TBranch        *b_CaloJetVec_CaloConstituentsVec_HCALChannelVec_Depth;   //!
-   TBranch        *b_CaloJetVec_CaloConstituentsVec_HCALChannelVec_NSimHits;   //!
-   TBranch        *b_CaloJetVec_CaloConstituentsVec_HCALChannelVec_TruthEnergy;   //!
+   TBranch        *b_CaloJetVec_CaloConstituentsVec_HCALChannelVec_Energy;   //!
 
    CaloJetTree(TString FileName_, TTree *tree=0);
    virtual ~CaloJetTree();
@@ -152,6 +140,7 @@ void CaloJetTree::Init(TTree *tree)
    // (once per file to be processed).
 
    // Set object pointer
+   CaloJetVec_Energy = 0;
    CaloJetVec_CaloConstituentsVec_Index = 0;
    CaloJetVec_CaloConstituentsVec_Ieta = 0;
    CaloJetVec_CaloConstituentsVec_Iphi = 0;
@@ -165,19 +154,14 @@ void CaloJetTree::Init(TTree *tree)
    CaloJetVec_CaloConstituentsVec_HCALChannelVec_Ieta = 0;
    CaloJetVec_CaloConstituentsVec_HCALChannelVec_Iphi = 0;
    CaloJetVec_CaloConstituentsVec_HCALChannelVec_Depth = 0;
-   CaloJetVec_CaloConstituentsVec_HCALChannelVec_NSimHits = 0;
-   CaloJetVec_CaloConstituentsVec_HCALChannelVec_TruthEnergy = 0;
+   CaloJetVec_CaloConstituentsVec_HCALChannelVec_Energy = 0;
    // Set branch addresses and branch pointers
    if (!tree) return;
    fChain = tree;
    fCurrent = -1;
    fChain->SetMakeClass(1);
 
-   fChain->SetBranchAddress("CaloJetVec_p4", &CaloJetVec_p4_, &b_CaloJetVec_p4_);
-   fChain->SetBranchAddress("CaloJetVec_p4.fCoordinates.fX", CaloJetVec_p4_fCoordinates_fX, &b_CaloJetVec_p4_fCoordinates_fX);
-   fChain->SetBranchAddress("CaloJetVec_p4.fCoordinates.fY", CaloJetVec_p4_fCoordinates_fY, &b_CaloJetVec_p4_fCoordinates_fY);
-   fChain->SetBranchAddress("CaloJetVec_p4.fCoordinates.fZ", CaloJetVec_p4_fCoordinates_fZ, &b_CaloJetVec_p4_fCoordinates_fZ);
-   fChain->SetBranchAddress("CaloJetVec_p4.fCoordinates.fT", CaloJetVec_p4_fCoordinates_fT, &b_CaloJetVec_p4_fCoordinates_fT);
+   fChain->SetBranchAddress("CaloJetVec_Energy", &CaloJetVec_Energy, &b_CaloJetVec_Energy);
    fChain->SetBranchAddress("CaloJetVec_CaloConstituentsVec_Index", &CaloJetVec_CaloConstituentsVec_Index, &b_CaloJetVec_CaloConstituentsVec_Index);
    fChain->SetBranchAddress("CaloJetVec_CaloConstituentsVec_Ieta", &CaloJetVec_CaloConstituentsVec_Ieta, &b_CaloJetVec_CaloConstituentsVec_Ieta);
    fChain->SetBranchAddress("CaloJetVec_CaloConstituentsVec_Iphi", &CaloJetVec_CaloConstituentsVec_Iphi, &b_CaloJetVec_CaloConstituentsVec_Iphi);
@@ -196,8 +180,7 @@ void CaloJetTree::Init(TTree *tree)
    fChain->SetBranchAddress("CaloJetVec_CaloConstituentsVec_HCALChannelVec_Ieta", &CaloJetVec_CaloConstituentsVec_HCALChannelVec_Ieta, &b_CaloJetVec_CaloConstituentsVec_HCALChannelVec_Ieta);
    fChain->SetBranchAddress("CaloJetVec_CaloConstituentsVec_HCALChannelVec_Iphi", &CaloJetVec_CaloConstituentsVec_HCALChannelVec_Iphi, &b_CaloJetVec_CaloConstituentsVec_HCALChannelVec_Iphi);
    fChain->SetBranchAddress("CaloJetVec_CaloConstituentsVec_HCALChannelVec_Depth", &CaloJetVec_CaloConstituentsVec_HCALChannelVec_Depth, &b_CaloJetVec_CaloConstituentsVec_HCALChannelVec_Depth);
-   fChain->SetBranchAddress("CaloJetVec_CaloConstituentsVec_HCALChannelVec_NSimHits", &CaloJetVec_CaloConstituentsVec_HCALChannelVec_NSimHits, &b_CaloJetVec_CaloConstituentsVec_HCALChannelVec_NSimHits);
-   fChain->SetBranchAddress("CaloJetVec_CaloConstituentsVec_HCALChannelVec_TruthEnergy", &CaloJetVec_CaloConstituentsVec_HCALChannelVec_TruthEnergy, &b_CaloJetVec_CaloConstituentsVec_HCALChannelVec_TruthEnergy);
+   fChain->SetBranchAddress("CaloJetVec_CaloConstituentsVec_HCALChannelVec_Energy", &CaloJetVec_CaloConstituentsVec_HCALChannelVec_Energy, &b_CaloJetVec_CaloConstituentsVec_HCALChannelVec_Energy);
    Notify();
 }
 
