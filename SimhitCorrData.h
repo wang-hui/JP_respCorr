@@ -144,7 +144,7 @@ public:
 class SimhitCorrData : public TObject
 {
 public:
-  SimhitCorrData() : fPrintLevel(1), fParStep(0.10), fParMin(0.), fParMax(0.) {}
+  SimhitCorrData() : fPrintLevel(0), fParStep(0.10), fParMin(0.), fParMax(0.) {}
   virtual ~SimhitCorrData() {}
 
   // add datum to the list of data

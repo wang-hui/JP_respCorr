@@ -8,8 +8,7 @@
 #include "SimhitCorrData.h"
 
 //TString FileName = "for_JP/UL_DoublePion_E-50_RECO_noPU_simHits_fix_HB_TTree.root";
-//TString FileName = "for_JP/UL_DoublePion_E-50_RECO_PU_DLPHIN_class_no_respCorr_TTree.root";
-TString FileName = "/uscms_data/d3/huiwang/HCAL/CMSSW_10_6_12/src/HCAL_MET_res/UL_DoublePion_E-50_RECO_PU_DLPHIN_class_no_respCorr_TTree.root";
+TString FileName = "for_JP/UL_DoublePion_E-50_RECO_PU_DLPHIN_class_no_respCorr_TTree_two_leading_match.root";
 //const int MaxEvents = 100000;
 const int MaxEvents = -1;
 const float SampleGenE = 50.0;  // set to 50 for DoublePion_E-50 sample
