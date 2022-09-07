@@ -1,17 +1,4 @@
 #include "SimhitCorrData.h"
-
-#include "TMinuit.h"
-#include "TMath.h"
-#include "TH1D.h"
-#include "TH2D.h"
-
-#include <iostream>
-#include <sstream>
-#include <cassert>
-#include <cmath>
-#include <climits>
-
-
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -144,3 +131,46 @@ void SimhitCorrData::FCN(Int_t &, Double_t*, Double_t &f, Double_t *par, Int_t)
   return;
 }
 
+void SimhitCorrData::ClosureTestPrint(int TestSize) {
+  int TestSize_ = TestSize;
+  if (TestSize_ > int(fData.size())) TestSize_ = fData.size();
+  for(int i = 0; i < TestSize_; i++) {
+    auto& Datum = fData.at(i);
+    if (i == 0) std::cout << "CaloJetEnergy, CaloJetEta, CaloJetPhi, old energy, new energy" << std::endl;
+    std::cout << Datum.getCaloJetEnergy() << ", " << Datum.getCaloJetEta() << ", " << Datum.getCaloJetPhi()
+    << ", " << Datum.getSumHcalEDefault() + Datum.getOtherE()
+    << ", " << Datum.getSumHcalE(fRespCorrs) + Datum.getOtherE() << std::endl;
+  }
+}
+
+std::vector<TH1F*> SimhitCorrData::ClosureTestDraw() {
+  std::vector<TH1F*> HistVec;
+  TH1F* CaloJetE_ratio_HB_h = new TH1F("CaloJetE_ratio_HB_h", "CaloJetE_ratio_HB_h", 80, 0.0, 4.0);
+  TH1F* CaloJetE_ratio_ieta1516_h = new TH1F("CaloJetE_ratio_ieta1516_h", "CaloJetE_ratio_ieta1516_h", 80, 0.0, 4.0);
+  TH1F* CaloJetE_ratio_HE_h = new TH1F("CaloJetE_ratio_HE_h", "CaloJetE_ratio_HE_h", 80, 0.0, 4.0);
+  TH1F* CaloJetE_ratio_HE_ietaL_h = new TH1F("CaloJetE_ratio_HE_ietaL_h", "CaloJetE_ratio_HE_ietaL_h", 80, 0.0, 4.0);
+  TH1F* CaloJetE_ratio_HE_ietaH_h = new TH1F("CaloJetE_ratio_HE_ietaH_h", "CaloJetE_ratio_HE_ietaH_h", 80, 0.0, 4.0);
+
+  for(auto& Datum : fData) {
+    auto Eta = fabs(Datum.getCaloJetEta());
+    auto Ratio = (Datum.getSumHcalE(fRespCorrs) + Datum.getOtherE()) / 50.0;
+    if(Eta < 1.2) {
+        CaloJetE_ratio_HB_h->Fill(Ratio);
+    }
+    else if (Eta < 1.4) {
+        CaloJetE_ratio_ieta1516_h->Fill(Ratio);
+    }
+    else {
+        CaloJetE_ratio_HE_h->Fill(Ratio);
+        if (Eta < 2.3) CaloJetE_ratio_HE_ietaL_h->Fill(Ratio);
+        else CaloJetE_ratio_HE_ietaH_h->Fill(Ratio);
+    }
+  }
+
+  HistVec.push_back(CaloJetE_ratio_HB_h);
+  HistVec.push_back(CaloJetE_ratio_ieta1516_h);
+  HistVec.push_back(CaloJetE_ratio_HE_h);
+  HistVec.push_back(CaloJetE_ratio_HE_ietaL_h);
+  HistVec.push_back(CaloJetE_ratio_HE_ietaH_h);
+  return HistVec;
+}

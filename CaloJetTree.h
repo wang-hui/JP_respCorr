@@ -30,6 +30,8 @@ public :
 
    // Declaration of leaf types
    vector<float>   *CaloJetVec_Energy;
+   vector<float>   *CaloJetVec_Eta;
+   vector<float>   *CaloJetVec_Phi;
    vector<int>     *CaloJetVec_CaloConstituentsVec_Index;
    vector<int>     *CaloJetVec_CaloConstituentsVec_Ieta;
    vector<int>     *CaloJetVec_CaloConstituentsVec_Iphi;
@@ -52,6 +54,8 @@ public :
 
    // List of branches
    TBranch        *b_CaloJetVec_Energy;   //!
+   TBranch        *b_CaloJetVec_Eta;   //!
+   TBranch        *b_CaloJetVec_Phi;   //!
    TBranch        *b_CaloJetVec_CaloConstituentsVec_Index;   //!
    TBranch        *b_CaloJetVec_CaloConstituentsVec_Ieta;   //!
    TBranch        *b_CaloJetVec_CaloConstituentsVec_Iphi;   //!
@@ -141,6 +145,8 @@ void CaloJetTree::Init(TTree *tree)
 
    // Set object pointer
    CaloJetVec_Energy = 0;
+   CaloJetVec_Eta = 0;
+   CaloJetVec_Phi = 0;
    CaloJetVec_CaloConstituentsVec_Index = 0;
    CaloJetVec_CaloConstituentsVec_Ieta = 0;
    CaloJetVec_CaloConstituentsVec_Iphi = 0;
@@ -162,6 +168,8 @@ void CaloJetTree::Init(TTree *tree)
    fChain->SetMakeClass(1);
 
    fChain->SetBranchAddress("CaloJetVec_Energy", &CaloJetVec_Energy, &b_CaloJetVec_Energy);
+   fChain->SetBranchAddress("CaloJetVec_Eta", &CaloJetVec_Eta, &b_CaloJetVec_Eta);
+   fChain->SetBranchAddress("CaloJetVec_Phi", &CaloJetVec_Phi, &b_CaloJetVec_Phi);
    fChain->SetBranchAddress("CaloJetVec_CaloConstituentsVec_Index", &CaloJetVec_CaloConstituentsVec_Index, &b_CaloJetVec_CaloConstituentsVec_Index);
    fChain->SetBranchAddress("CaloJetVec_CaloConstituentsVec_Ieta", &CaloJetVec_CaloConstituentsVec_Ieta, &b_CaloJetVec_CaloConstituentsVec_Ieta);
    fChain->SetBranchAddress("CaloJetVec_CaloConstituentsVec_Iphi", &CaloJetVec_CaloConstituentsVec_Iphi, &b_CaloJetVec_CaloConstituentsVec_Iphi);

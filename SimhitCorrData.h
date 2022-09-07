@@ -16,11 +16,22 @@
 #include <tuple>
 #include <cassert>
 
+
+#include "TMinuit.h"
+#include "TMath.h"
+#include "TH1D.h"
+#include "TH1F.h"
+
+#include <iostream>
+#include <sstream>
+#include <cassert>
+#include <cmath>
+#include <climits>
+
+
 //
 // forward declarations
 //
-
-class TH1D;
 
 //
 // The response corrections are a map to a value and an uncertainty from eta-depth
@@ -117,7 +128,7 @@ public:
 class SimhitCorrDatum
 {
 public:
-  SimhitCorrDatum() { fOtherE=fTruthE=0.0; }
+  SimhitCorrDatum() {}
   ~SimhitCorrDatum() {}
   friend class SimhitCorrData;
   
@@ -126,18 +137,26 @@ public:
   Double_t getSumHcalE(const RespCorr& respcorr) const { return fHcalE.getSumVal(respcorr); }
   Double_t getOtherE(void) const { return fOtherE; }
   Double_t getTruthE(void) const { return fTruthE; }
+  Double_t getCaloJetEnergy(void) const { return fCaloJetEnergy; }
+  Double_t getCaloJetEta(void) const { return fCaloJetEta; }
+  Double_t getCaloJetPhi(void) const { return fCaloJetPhi; }
   
-  void setOtherE(Double_t e) { fOtherE=e; return; }
   void addOtherE(Double_t e) { fOtherE+=e; return; }
   void setTruthE(Double_t e) { fTruthE=e; return; }
+  void setCaloJetEnergy(Double_t e) { fCaloJetEnergy=e; return; }
+  void setCaloJetEta(Double_t e) { fCaloJetEta=e; return; }
+  void setCaloJetPhi(Double_t e) { fCaloJetPhi=e; return; }
   void setHcalE(Int_t ieta, Int_t iphi, Int_t depth, Double_t e) { fHcalE.setVal(ieta, iphi, depth, e); return; } 
   void addHcalE(Int_t ieta, Int_t iphi, Int_t depth, Double_t e) { fHcalE.addVal(ieta, iphi, depth, e); return; }
 
  private:
 
-  Double_t fOtherE;
+  Double_t fOtherE = 0;
   HcalValueMap fHcalE;
-  Double_t fTruthE;
+  Double_t fTruthE = 0;
+  Double_t fCaloJetEnergy = 0;
+  Double_t fCaloJetEta = 0;
+  Double_t fCaloJetPhi = 0;
 };
 
 
@@ -155,6 +174,9 @@ public:
 
   // fit for the response corrections
   const RespCorr& doFit(void);
+
+  void ClosureTestPrint(int TestSize);
+  std::vector<TH1F*> ClosureTestDraw();
 
   // fitting parameters
   inline void SetPrintLevel(Int_t p) { fPrintLevel=p; }

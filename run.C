@@ -8,8 +8,8 @@
 #include "SimhitCorrData.h"
 
 //TString FileName = "for_JP/UL_DoublePion_E-50_RECO_noPU_simHits_fix_HB_TTree.root";
-TString FileName = "for_JP/UL_DoublePion_E-50_RECO_PU_DLPHIN_class_no_respCorr_TTree_two_leading_match.root";
-//const int MaxEvents = 100000;
+TString FileName = "for_JP/UL_DoublePion_E-50_RECO_PU_DLPHIN_class_no_respCorr_TTree_G0_match.root";
+//const int MaxEvents = 10000;
 const int MaxEvents = -1;
 const float SampleGenE = 50.0;  // set to 50 for DoublePion_E-50 sample
 
@@ -39,8 +39,12 @@ void CaloJetTree::Loop()
 
     Int_t nCaloJetVec = CaloJetVec_Energy->size(); 
     SimhitCorrDatum datum[nCaloJetVec];
-    for(Int_t i=0; i<nCaloJetVec; i++)
+    for(Int_t i=0; i<nCaloJetVec; i++) {
       datum[i].setTruthE(SampleGenE);
+      datum[i].setCaloJetEnergy(CaloJetVec_Energy->at(i));
+      datum[i].setCaloJetEta(CaloJetVec_Eta->at(i));
+      datum[i].setCaloJetPhi(CaloJetVec_Phi->at(i));
+    }
     
     for(unsigned long i=0; i<CaloJetVec_CaloConstituentsVec_Index->size(); i++) {
       int index=CaloJetVec_CaloConstituentsVec_Index->at(i);
@@ -82,6 +86,13 @@ void CaloJetTree::Loop()
   h6->Write();
   h7->Write();
   rootfile->Close();
+
+  data.ClosureTestPrint(0);
+  auto HistVec = data.ClosureTestDraw();
+  TFile *ClosureTestRoot= new TFile("ClosureTest.root", "RECREATE");
+  ClosureTestRoot->cd();
+  for(auto Hist : HistVec) Hist->Write();
+  ClosureTestRoot->Close();
   
   return;
 }
