@@ -89,10 +89,20 @@ void CaloJetTree::Loop()
 
   data.ClosureTestPrint(0);
   auto HistVec = data.ClosureTestDraw();
+/*
   TFile *ClosureTestRoot= new TFile("ClosureTest.root", "RECREATE");
   ClosureTestRoot->cd();
   for(auto Hist : HistVec) Hist->Write();
   ClosureTestRoot->Close();
-  
+*/  
+
+  TCanvas* mycanvas = new TCanvas("mycanvas", "mycanvas", 600, 600);
+  for(auto Hist : HistVec) {
+    Hist->Draw();
+    TString HistName = Hist->GetTitle();
+    HistName = "plots_temp/" + HistName + ".png";
+    mycanvas->SaveAs(HistName);
+  }
+
   return;
 }

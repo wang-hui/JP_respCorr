@@ -89,6 +89,8 @@ const RespCorr& SimhitCorrData::doFit(void)
   gMinuit->SetFCN(FCN);
   gMinuit->SetObjectFit(this);
 
+  //gMinuit->SetMaxIterations(1000);
+
   std::cout << "Number of entries to fit=" << fData.size() << std::endl;
   
   // define the parameters
@@ -145,32 +147,88 @@ void SimhitCorrData::ClosureTestPrint(int TestSize) {
 
 std::vector<TH1F*> SimhitCorrData::ClosureTestDraw() {
   std::vector<TH1F*> HistVec;
-  TH1F* CaloJetE_ratio_HB_h = new TH1F("CaloJetE_ratio_HB_h", "CaloJetE_ratio_HB_h", 80, 0.0, 4.0);
-  TH1F* CaloJetE_ratio_ieta1516_h = new TH1F("CaloJetE_ratio_ieta1516_h", "CaloJetE_ratio_ieta1516_h", 80, 0.0, 4.0);
-  TH1F* CaloJetE_ratio_HE_h = new TH1F("CaloJetE_ratio_HE_h", "CaloJetE_ratio_HE_h", 80, 0.0, 4.0);
-  TH1F* CaloJetE_ratio_HE_ietaL_h = new TH1F("CaloJetE_ratio_HE_ietaL_h", "CaloJetE_ratio_HE_ietaL_h", 80, 0.0, 4.0);
-  TH1F* CaloJetE_ratio_HE_ietaH_h = new TH1F("CaloJetE_ratio_HE_ietaH_h", "CaloJetE_ratio_HE_ietaH_h", 80, 0.0, 4.0);
+  TH1F* CaloJetE_OldRatio_HB_h = new TH1F("CaloJetE_OldRatio_HB_h", "CaloJetE_OldRatio_HB_h", 80, 0.0, 4.0);
+  TH1F* CaloJetE_OldRatio_ieta1516_h = new TH1F("CaloJetE_OldRatio_ieta1516_h", "CaloJetE_OldRatio_ieta1516_h", 80, 0.0, 4.0);
+  TH1F* CaloJetE_OldRatio_HE_h = new TH1F("CaloJetE_OldRatio_HE_h", "CaloJetE_OldRatio_HE_h", 80, 0.0, 4.0);
+  TH1F* CaloJetE_OldRatio_HE_ietaL_h = new TH1F("CaloJetE_OldRatio_HE_ietaL_h", "CaloJetE_OldRatio_HE_ietaL_h", 80, 0.0, 4.0);
+  TH1F* CaloJetE_OldRatio_HE_ietaH_h = new TH1F("CaloJetE_OldRatio_HE_ietaH_h", "CaloJetE_OldRatio_HE_ietaH_h", 80, 0.0, 4.0);
+  TH1F* CaloJetE_NewRatio_HB_h = new TH1F("CaloJetE_NewRatio_HB_h", "CaloJetE_NewRatio_HB_h", 80, 0.0, 4.0);
+  TH1F* CaloJetE_NewRatio_ieta1516_h = new TH1F("CaloJetE_NewRatio_ieta1516_h", "CaloJetE_NewRatio_ieta1516_h", 80, 0.0, 4.0);
+  TH1F* CaloJetE_NewRatio_HE_h = new TH1F("CaloJetE_NewRatio_HE_h", "CaloJetE_NewRatio_HE_h", 80, 0.0, 4.0);
+  TH1F* CaloJetE_NewRatio_HE_ietaL_h = new TH1F("CaloJetE_NewRatio_HE_ietaL_h", "CaloJetE_NewRatio_HE_ietaL_h", 80, 0.0, 4.0);
+  TH1F* CaloJetE_NewRatio_HE_ietaH_h = new TH1F("CaloJetE_NewRatio_HE_ietaH_h", "CaloJetE_NewRatio_HE_ietaH_h", 80, 0.0, 4.0);
+
+  TH1F* CaloJetE_OldDiff_HB_h = new TH1F("CaloJetE_OldDiff_HB_h", "CaloJetE_OldDiff_HB_h", 100, -50, 50);
+  TH1F* CaloJetE_OldDiff_ieta1516_h = new TH1F("CaloJetE_OldDiff_ieta1516_h", "CaloJetE_OldDiff_ieta1516_h", 100, -50, 50);
+  TH1F* CaloJetE_OldDiff_HE_h = new TH1F("CaloJetE_OldDiff_HE_h", "CaloJetE_OldDiff_HE_h", 100, -50, 50);
+  TH1F* CaloJetE_OldDiff_HE_ietaL_h = new TH1F("CaloJetE_OldDiff_HE_ietaL_h", "CaloJetE_OldDiff_HE_ietaL_h", 100, -50, 50);
+  TH1F* CaloJetE_OldDiff_HE_ietaH_h = new TH1F("CaloJetE_OldDiff_HE_ietaH_h", "CaloJetE_OldDiff_HE_ietaH_h", 100, -50, 50);
+  TH1F* CaloJetE_NewDiff_HB_h = new TH1F("CaloJetE_NewDiff_HB_h", "CaloJetE_NewDiff_HB_h", 100, -50, 50);
+  TH1F* CaloJetE_NewDiff_ieta1516_h = new TH1F("CaloJetE_NewDiff_ieta1516_h", "CaloJetE_NewDiff_ieta1516_h", 100, -50, 50);
+  TH1F* CaloJetE_NewDiff_HE_h = new TH1F("CaloJetE_NewDiff_HE_h", "CaloJetE_NewDiff_HE_h", 100, -50, 50);
+  TH1F* CaloJetE_NewDiff_HE_ietaL_h = new TH1F("CaloJetE_NewDiff_HE_ietaL_h", "CaloJetE_NewDiff_HE_ietaL_h", 100, -50, 50);
+  TH1F* CaloJetE_NewDiff_HE_ietaH_h = new TH1F("CaloJetE_NewDiff_HE_ietaH_h", "CaloJetE_NewDiff_HE_ietaH_h", 100, -50, 50);
 
   for(auto& Datum : fData) {
     auto Eta = fabs(Datum.getCaloJetEta());
-    auto Ratio = (Datum.getSumHcalE(fRespCorrs) + Datum.getOtherE()) / 50.0;
+    auto OldRatio = (Datum.getSumHcalEDefault() + Datum.getOtherE()) / 50.0;
+    auto NewRatio = (Datum.getSumHcalE(fRespCorrs) + Datum.getOtherE()) / 50.0;
+    auto OldDiff = (Datum.getSumHcalEDefault() + Datum.getOtherE()) - 50.0;
+    auto NewDiff = (Datum.getSumHcalE(fRespCorrs) + Datum.getOtherE()) - 50.0;
+
     if(Eta < 1.2) {
-        CaloJetE_ratio_HB_h->Fill(Ratio);
+        CaloJetE_OldRatio_HB_h->Fill(OldRatio);
+        CaloJetE_NewRatio_HB_h->Fill(NewRatio);
+        CaloJetE_OldDiff_HB_h->Fill(OldDiff);
+        CaloJetE_NewDiff_HB_h->Fill(NewDiff);
     }
     else if (Eta < 1.4) {
-        CaloJetE_ratio_ieta1516_h->Fill(Ratio);
+        CaloJetE_OldRatio_ieta1516_h->Fill(OldRatio);
+        CaloJetE_NewRatio_ieta1516_h->Fill(NewRatio);
+        CaloJetE_OldDiff_ieta1516_h->Fill(OldDiff);
+        CaloJetE_NewDiff_ieta1516_h->Fill(NewDiff);
     }
     else {
-        CaloJetE_ratio_HE_h->Fill(Ratio);
-        if (Eta < 2.3) CaloJetE_ratio_HE_ietaL_h->Fill(Ratio);
-        else CaloJetE_ratio_HE_ietaH_h->Fill(Ratio);
+        CaloJetE_OldRatio_HE_h->Fill(OldRatio);
+        CaloJetE_NewRatio_HE_h->Fill(NewRatio);
+        CaloJetE_OldDiff_HE_h->Fill(OldDiff);
+        CaloJetE_NewDiff_HE_h->Fill(NewDiff);
+        if (Eta < 2.3) {
+            CaloJetE_OldRatio_HE_ietaL_h->Fill(OldRatio);
+            CaloJetE_NewRatio_HE_ietaL_h->Fill(NewRatio);
+            CaloJetE_OldDiff_HE_ietaL_h->Fill(OldDiff);
+            CaloJetE_NewDiff_HE_ietaL_h->Fill(NewDiff);
+        }
+        else {
+            CaloJetE_OldRatio_HE_ietaH_h->Fill(OldRatio);
+            CaloJetE_NewRatio_HE_ietaH_h->Fill(NewRatio);
+            CaloJetE_OldDiff_HE_ietaH_h->Fill(OldDiff);
+            CaloJetE_NewDiff_HE_ietaH_h->Fill(NewDiff);
+        }
     }
   }
 
-  HistVec.push_back(CaloJetE_ratio_HB_h);
-  HistVec.push_back(CaloJetE_ratio_ieta1516_h);
-  HistVec.push_back(CaloJetE_ratio_HE_h);
-  HistVec.push_back(CaloJetE_ratio_HE_ietaL_h);
-  HistVec.push_back(CaloJetE_ratio_HE_ietaH_h);
+  HistVec.push_back(CaloJetE_OldRatio_HB_h);
+  HistVec.push_back(CaloJetE_OldRatio_ieta1516_h);
+  HistVec.push_back(CaloJetE_OldRatio_HE_h);
+  HistVec.push_back(CaloJetE_OldRatio_HE_ietaL_h);
+  HistVec.push_back(CaloJetE_OldRatio_HE_ietaH_h);
+  HistVec.push_back(CaloJetE_NewRatio_HB_h);
+  HistVec.push_back(CaloJetE_NewRatio_ieta1516_h);
+  HistVec.push_back(CaloJetE_NewRatio_HE_h);
+  HistVec.push_back(CaloJetE_NewRatio_HE_ietaL_h);
+  HistVec.push_back(CaloJetE_NewRatio_HE_ietaH_h);
+
+  HistVec.push_back(CaloJetE_OldDiff_HB_h);
+  HistVec.push_back(CaloJetE_OldDiff_ieta1516_h);
+  HistVec.push_back(CaloJetE_OldDiff_HE_h);
+  HistVec.push_back(CaloJetE_OldDiff_HE_ietaL_h);
+  HistVec.push_back(CaloJetE_OldDiff_HE_ietaH_h);
+  HistVec.push_back(CaloJetE_NewDiff_HB_h);
+  HistVec.push_back(CaloJetE_NewDiff_ieta1516_h);
+  HistVec.push_back(CaloJetE_NewDiff_HE_h);
+  HistVec.push_back(CaloJetE_NewDiff_HE_ietaL_h);
+  HistVec.push_back(CaloJetE_NewDiff_HE_ietaH_h);
+
   return HistVec;
 }
