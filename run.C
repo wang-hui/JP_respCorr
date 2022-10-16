@@ -8,7 +8,7 @@
 #include "SimhitCorrData.h"
 
 //TString FileName = "for_JP/UL_DoublePion_E-50_RECO_noPU_simHits_fix_HB_TTree.root";
-TString FileName = "for_JP/UL_DoublePion_E-50_RECO_PU_DLPHIN_class_no_respCorr_TTree_G0_match.root";
+TString FileName = "for_JP/UL_DoublePion_E-50_RECO_PU_DLPHIN_class_no_respCorr_save_to_AUX_TTree.root";
 //const int MaxEvents = 10000;
 const int MaxEvents = -1;
 const float SampleGenE = 50.0;  // set to 50 for DoublePion_E-50 sample
@@ -59,7 +59,7 @@ void CaloJetTree::Loop()
       int ieta=CaloJetVec_CaloConstituentsVec_HCALChannelVec_Ieta->at(i);
       int iphi=CaloJetVec_CaloConstituentsVec_HCALChannelVec_Iphi->at(i);
       int depth=CaloJetVec_CaloConstituentsVec_HCALChannelVec_Depth->at(i);
-      double energy=CaloJetVec_CaloConstituentsVec_HCALChannelVec_Energy->at(i);
+      double energy=CaloJetVec_CaloConstituentsVec_HCALChannelVec_AuxEnergy->at(i);
       datum[index].addHcalE(ieta, iphi, depth, energy);
     }
     
