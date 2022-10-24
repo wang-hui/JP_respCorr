@@ -137,12 +137,18 @@ public:
   Double_t getSumHcalE(const RespCorr& respcorr) const { return fHcalE.getSumVal(respcorr); }
   Double_t getOtherE(void) const { return fOtherE; }
   Double_t getTruthE(void) const { return fTruthE; }
+  Double_t getGenJetEnergy(void) const { return fGenJetEnergy; }
+  Double_t getGenJetEta(void) const { return fGenJetEta; }
+  Double_t getGenJetPhi(void) const { return fGenJetPhi; }
   Double_t getCaloJetEnergy(void) const { return fCaloJetEnergy; }
   Double_t getCaloJetEta(void) const { return fCaloJetEta; }
   Double_t getCaloJetPhi(void) const { return fCaloJetPhi; }
   
   void addOtherE(Double_t e) { fOtherE+=e; return; }
   void setTruthE(Double_t e) { fTruthE=e; return; }
+  void setGenJetEnergy(Double_t e) { fGenJetEnergy=e; return; }
+  void setGenJetEta(Double_t e) { fGenJetEta=e; return; }
+  void setGenJetPhi(Double_t e) { fGenJetPhi=e; return; }
   void setCaloJetEnergy(Double_t e) { fCaloJetEnergy=e; return; }
   void setCaloJetEta(Double_t e) { fCaloJetEta=e; return; }
   void setCaloJetPhi(Double_t e) { fCaloJetPhi=e; return; }
@@ -154,6 +160,9 @@ public:
   Double_t fOtherE = 0;
   HcalValueMap fHcalE;
   Double_t fTruthE = 0;
+  Double_t fGenJetEnergy = 0;
+  Double_t fGenJetEta = 0;
+  Double_t fGenJetPhi = 0;
   Double_t fCaloJetEnergy = 0;
   Double_t fCaloJetEta = 0;
   Double_t fCaloJetPhi = 0;

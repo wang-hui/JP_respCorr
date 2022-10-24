@@ -8,10 +8,10 @@
 #include "SimhitCorrData.h"
 
 //TString FileName = "for_JP/UL_DoublePion_E-50_RECO_noPU_simHits_fix_HB_TTree.root";
-TString FileName = "for_JP/UL_DoublePion_E-50_RECO_PU_DLPHIN_class_no_respCorr_save_to_AUX_TTree.root";
+//TString FileName = "for_JP/UL_DoublePion_E-50_RECO_PU_DLPHIN_class_no_respCorr_save_to_AUX_TTree.root";
+TString FileName = "for_JP/UL_DoublePion_E-50_RECO_noPU_DLPHIN_class_no_respCorr_save_to_AUX_TTree.root";
 //const int MaxEvents = 10000;
 const int MaxEvents = -1;
-const float SampleGenE = 50.0;  // set to 50 for DoublePion_E-50 sample
 
 void run(void)
 {
@@ -40,7 +40,10 @@ void CaloJetTree::Loop()
     Int_t nCaloJetVec = CaloJetVec_Energy->size(); 
     SimhitCorrDatum datum[nCaloJetVec];
     for(Int_t i=0; i<nCaloJetVec; i++) {
-      datum[i].setTruthE(SampleGenE);
+      datum[i].setTruthE(GenJetVec_Energy->at(i));
+      datum[i].setGenJetEnergy(GenJetVec_Energy->at(i));
+      datum[i].setGenJetEta(GenJetVec_Eta->at(i));
+      datum[i].setGenJetPhi(GenJetVec_Phi->at(i));
       datum[i].setCaloJetEnergy(CaloJetVec_Energy->at(i));
       datum[i].setCaloJetEta(CaloJetVec_Eta->at(i));
       datum[i].setCaloJetPhi(CaloJetVec_Phi->at(i));
@@ -68,7 +71,7 @@ void CaloJetTree::Loop()
   }
 
   RespCorr rc=data.doFit();
-  TFile *rootfile= new TFile("out.root", "RECREATE");
+  TFile *rootfile= new TFile("results_temp/respCorr.root", "RECREATE");
   TH1D* h1=rc.makeHist("D1","D1",1);
   TH1D* h2=rc.makeHist("D2","D2",2);
   TH1D* h3=rc.makeHist("D3","D3",3);
@@ -89,12 +92,11 @@ void CaloJetTree::Loop()
 
   data.ClosureTestPrint(0);
   auto HistVec = data.ClosureTestDraw();
-/*
-  TFile *ClosureTestRoot= new TFile("ClosureTest.root", "RECREATE");
+
+  TFile *ClosureTestRoot= new TFile("results_temp/ClosureTest.root", "RECREATE");
   ClosureTestRoot->cd();
   for(auto Hist : HistVec) Hist->Write();
   ClosureTestRoot->Close();
-*/  
 
   TCanvas* mycanvas = new TCanvas("mycanvas", "mycanvas", 600, 600);
   for(auto Hist : HistVec) {
