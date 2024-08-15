@@ -7,9 +7,8 @@
 
 #include "SimhitCorrData.h"
 
-//TString FileName = "for_JP/UL_DoublePion_E-50_RECO_noPU_simHits_fix_HB_TTree.root";
-//TString FileName = "for_JP/UL_DoublePion_E-50_RECO_PU_DLPHIN_class_no_respCorr_save_to_AUX_TTree.root";
-TString FileName = "for_JP/UL_DoublePion_E-50_RECO_noPU_DLPHIN_class_no_respCorr_save_to_AUX_TTree.root";
+//TString FileName = "for_JP/UL_DoublePion_E-50_RECO_noPU_DLPHIN_class_no_respCorr_save_to_AUX_TTree.root";
+TString FileName = "../HCAL_MET_res/SinglePion_E-300_TTree.root";
 //const int MaxEvents = 10000;
 const int MaxEvents = -1;
 
@@ -40,6 +39,8 @@ void CaloJetTree::Loop()
     Int_t nCaloJetVec = CaloJetVec_Energy->size(); 
     SimhitCorrDatum datum[nCaloJetVec];
     for(Int_t i=0; i<nCaloJetVec; i++) {
+      // currently Truth is a duplicate of Gen.
+      // using tracker P as Truth under development
       datum[i].setTruthE(GenJetVec_Energy->at(i));
       datum[i].setGenJetEnergy(GenJetVec_Energy->at(i));
       datum[i].setGenJetEta(GenJetVec_Eta->at(i));
