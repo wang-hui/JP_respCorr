@@ -89,7 +89,11 @@ const RespCorr& SimhitCorrData::doFit(void)
   gMinuit->SetFCN(FCN);
   gMinuit->SetObjectFit(this);
 
-  //gMinuit->SetMaxIterations(1000);
+  gMinuit->SetMaxIterations(1000);
+  double arglist[10];
+  int ierflg = 0;
+  arglist[0]=0;
+  gMinuit->mnexcm("SET STR",arglist,1,ierflg);
 
   std::cout << "Number of entries to fit=" << fData.size() << std::endl;
   
