@@ -7,9 +7,9 @@
 
 #include "SimhitCorrData.h"
 
-//TString FileName = "for_JP/UL_DoublePion_E-50_RECO_noPU_DLPHIN_class_no_respCorr_save_to_AUX_TTree.root";
-TString FileName = "../HCAL_MET_res/SinglePion_E-50_TTree.root";
-//const int MaxEvents = 10000;
+TString FileName = "/afs/cern.ch/user/z/zhipeng/public/TTree_HCAL_Root/SinglePion_E-50_TTree.root";
+//TString FileName = "../HCAL_MET_res/SinglePion_E-300_TTree.root";
+//const int MaxEvents = 300000;
 const int MaxEvents = -1;
 
 void run(void)
@@ -36,7 +36,7 @@ void CaloJetTree::Loop()
     if(jentry%10000==0) std::cout << jentry << std::endl;
     if(MaxEvents > 0 && jentry > MaxEvents) break;
 
-    Int_t nCaloJetVec = CaloJetVec_Energy->size(); 
+    Int_t nCaloJetVec = CaloJetVec_Energy->size();
     SimhitCorrDatum datum[nCaloJetVec];
     for(Int_t i=0; i<nCaloJetVec; i++) {
       // currently Truth is a duplicate of Gen.
@@ -48,6 +48,7 @@ void CaloJetTree::Loop()
       datum[i].setCaloJetEnergy(CaloJetVec_Energy->at(i));
       datum[i].setCaloJetEta(CaloJetVec_Eta->at(i));
       datum[i].setCaloJetPhi(CaloJetVec_Phi->at(i));
+      //std::cout << "CaloJet" << i << ": " << CaloJetVec_Energy->at(i) << std::endl;
     }
     
     for(unsigned long i=0; i<CaloJetVec_CaloConstituentsVec_Index->size(); i++) {
@@ -55,6 +56,8 @@ void CaloJetTree::Loop()
       datum[index].addOtherE(CaloJetVec_CaloConstituentsVec_EmEnergy->at(i));
       datum[index].addOtherE(CaloJetVec_CaloConstituentsVec_HFEnergy->at(i));
       datum[index].addOtherE(CaloJetVec_CaloConstituentsVec_HOEnergy->at(i));
+      //std::cout << "CaloJet" << index << ": CaloCons" << i << ": "
+      //          << CaloJetVec_CaloConstituentsVec_HadEnergy->at(i) << std::endl;
     }
 
     for(unsigned long i=0; i<CaloJetVec_CaloConstituentsVec_HCALChannelVec_Index->size(); i++) {
@@ -63,8 +66,10 @@ void CaloJetTree::Loop()
       int ieta=CaloJetVec_CaloConstituentsVec_HCALChannelVec_Ieta->at(i);
       int iphi=CaloJetVec_CaloConstituentsVec_HCALChannelVec_Iphi->at(i);
       int depth=CaloJetVec_CaloConstituentsVec_HCALChannelVec_Depth->at(i);
-      double energy=CaloJetVec_CaloConstituentsVec_HCALChannelVec_AuxEnergy->at(i);
+      double energy=CaloJetVec_CaloConstituentsVec_HCALChannelVec_Energy->at(i);
       datum[index].addHcalE(ieta, iphi, depth, energy);
+      //std::cout << "CaloJet" << index << ": CaloCons" << twrindex << ": Channel" << i << ": "
+      //          << CaloJetVec_CaloConstituentsVec_HCALChannelVec_Energy->at(i) << std::endl;
     }
     
     for(Int_t i=0; i<nCaloJetVec; i++)
@@ -91,7 +96,7 @@ void CaloJetTree::Loop()
   h7->Write();
   rootfile->Close();
 
-  data.ClosureTestPrint(0);
+  data.ClosureTestPrint(10);
   auto HistVec = data.ClosureTestDraw();
 
   TFile *ClosureTestRoot= new TFile("results_temp/ClosureTest.root", "RECREATE");

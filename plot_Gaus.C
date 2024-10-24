@@ -1,8 +1,6 @@
 int plot_Gaus()
 {
-    //TString file_name = "test";
-    //TString file_name = "UL_DoublePion_E-50_RECO_PU_DLPHIN_class_no_respCorr_save_to_AUX_TTree";
-    TString file_name = "UL_DoublePion_E-50_RECO_noPU_DLPHIN_class_no_respCorr_save_to_AUX_TTree";
+    TString file_name = "results_SinglePion_E-50_0p3M";
 
     bool plot_ratio = true;
 
@@ -99,10 +97,10 @@ int plot_Gaus()
         TLatex latex;
         latex.SetTextSize(0.04);
         latex.SetNDC();
-        latex.DrawLatex(0.6,0.7,TS1);
-        latex.DrawLatex(0.6,0.65,TS2);
-        latex.DrawLatex(0.6,0.6,TS3);
-        latex.DrawLatex(0.6,0.55,TS4);
+        latex.DrawLatex(0.5,0.7,TS1);
+        latex.DrawLatex(0.5,0.65,TS2);
+        latex.DrawLatex(0.5,0.6,TS3);
+        latex.DrawLatex(0.5,0.55,TS4);
 
         mycanvas->SetLeftMargin(0.15);
         mycanvas->SetRightMargin(0.1);
